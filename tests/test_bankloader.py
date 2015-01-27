@@ -19,3 +19,6 @@ def test_raw_transaction_looks_good():
     assert t.description == 'MCDONALDS'
     assert isinstance(t.amount, Decimal)
     assert t.checksum
+
+def test_fails_with_invalid_or_incorrect_data():
+    pass

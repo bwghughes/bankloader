@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 import md5
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from dateutil.parser import parse
+
+
+class InvalidTransaction(Exception):
+    pass
 
 
 class RawTransaction(object):
@@ -11,8 +15,8 @@ class RawTransaction(object):
     checksum = None
 
     """docstring for Transaction"""
-    def __init__(self, *args):
-        self.args = args
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
         self._determine_types()
 
     def _determine_types(self):
@@ -24,7 +28,11 @@ class RawTransaction(object):
             #TODO: Make this less brittle
 
         """
-        self.date = parse(self.args[0])
-        self.description = self.args[1].strip()
-        self.amount = Decimal(self.args[2])
-        self.checksum = md5.new(''.join(self.args)).digest()
+        try:
+            self.date = parse(self.kwargs.get('date'))
+            self.description = self.kwargs.get('description').strip()
+            self.amount = Decimal(self.kwargs.get('amount'))
+            self.checksum = md5.new(''.join(self.kwargs.values())).digest()
+        except (ValueError, InvalidOperation) as e:
+            raise InvalidTransaction("Can't make a transaction from {} - {}"
+                                     .format(self.kwargs, e))

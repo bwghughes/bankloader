@@ -32,7 +32,8 @@ class RawTransaction(object):
             self.date = parse(self.kwargs.get('date'))
             self.description = self.kwargs.get('description').strip()
             self.amount = Decimal(self.kwargs.get('amount'))
-            self.checksum = hashlib.md5(''.join(self.kwargs.values())).digest()
+            self.checksum = hashlib.md5(u''.join(self.kwargs.values())
+                                        .encode('utf-8')).digest()
         except (ValueError, InvalidOperation) as e:
             raise InvalidTransaction("Can't make a transaction from {0} - {1}"
                                      .format(self.kwargs, e))

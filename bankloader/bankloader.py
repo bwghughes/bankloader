@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import md5
+import hashlib
 from decimal import Decimal, InvalidOperation
 from dateutil.parser import parse
 
@@ -32,7 +32,7 @@ class RawTransaction(object):
             self.date = parse(self.kwargs.get('date'))
             self.description = self.kwargs.get('description').strip()
             self.amount = Decimal(self.kwargs.get('amount'))
-            self.checksum = md5.new(''.join(self.kwargs.values())).digest()
+            self.checksum = hashlib.md5(''.join(self.kwargs.values())).digest()
         except (ValueError, InvalidOperation) as e:
-            raise InvalidTransaction("Can't make a transaction from {} - {}"
+            raise InvalidTransaction("Can't make a transaction from {0} - {1}"
                                      .format(self.kwargs, e))
